@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Airtex server</h1>
+
+
+    <textarea id="textArea" style="height: 200px;"></textarea>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io()
+
+        const handleText = (text) => {
+            console.log('sending')
+            socket.emit('document', text)
+        }
+
+        document.getElementById('textArea').addEventListener('input', (e) => {
+            handleText(e.target.value)
+        })
+
+        socket.on('refresh', (text) => {
+            document.getElementById('textArea').value = text
+        })
+    </script>
+</body>
+</html>

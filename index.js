@@ -9,6 +9,19 @@ const io = require('socket.io')(http, {
     credentials: true
   }
 })
+const latex = require('node-latex')
+const { createReadStream, createWriteStream, writeFile } = require('fs')
+const { join } = require('path')
+
+const myTex = String.raw`\documentclass{article}
+\begin{document}
+  Hello World!
+\end{document}`
+
+writeFile('input.tex', myTex, function (err) {
+  if (err) return console.log(err)
+  console.log('Hello World > helloworld.txt')
+})
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
@@ -33,3 +46,15 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('refresh', text)
   })
 })
+
+// const input = fs.createReadStream('input.tex')
+// const output = fs.createWriteStream('output.pdf')
+// const pdf = latex(input)
+
+// pdf.pipe(output)
+// pdf.on('error', err => console.error(err))
+// pdf.on('finish', () => console.log('PDF generated!'))
+const input = createReadStream(join(__dirname, 'input.tex'))
+const output = createWriteStream(join(__dirname, 'output.pdf'))
+
+latex(input).pipe(output)
